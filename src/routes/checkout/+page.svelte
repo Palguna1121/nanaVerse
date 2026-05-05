@@ -33,7 +33,10 @@
 			return;
 		}
 
-		if (selectedPG.name.toLowerCase().includes('ipaymu')) {
+		// PG yang punya integrasi real API (mode redirect)
+		const realPGs = ['ipaymu', 'midtrans'];
+
+		if (realPGs.includes(selectedPG.id)) {
 			isProcessing = true;
 			try {
 				const carts = {
@@ -49,13 +52,16 @@
 
 				const userData = {
 					buyerName: 'Demo User',
+					name: 'Demo User',
 					buyerEmail: 'sandbox@payment.com',
+					email: 'sandbox@payment.com',
 					buyerPhone: '081234567890',
+					phone: '081234567890',
 					amount: $cartTotal.toString(),
 					imageUrl: 'https://demo.ipaymu.com/assets/images/product-7.jpg'
 				};
 
-				const res = await fetch('/api/checkout/ipaymu', {
+				const res = await fetch(`/api/checkout/${selectedPG.id}`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ mode: 'redirect', carts, userData })

@@ -46,6 +46,7 @@
 	},
 	"dependencies": {
 		"ipaymu-nodejs-api": "^1.0.1",
+		"midtrans-client": "^1.4.3",
 		"xepeng-oauth-js": "^1.0.2"
 	}
 }

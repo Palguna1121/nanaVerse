@@ -34,11 +34,12 @@
 			return;
 		}
 
-		// Jika PG adalah iPaymu dan mode Redirect
-		if (selectedPG.name.toLowerCase().includes('ipaymu')) {
+		// PG yang punya integrasi real API (mode redirect)
+		const realPGs = ['ipaymu', 'midtrans'];
+
+		if (realPGs.includes(selectedPG.id)) {
 			isProcessing = true;
 			try {
-				// Konversi data keranjang (cartItems) ke format iPaymu
 				const carts = {
 					product: $cartItems.map((item) => item.name),
 					quantity: $cartItems.map((item) => item.quantity.toString()),
@@ -52,13 +53,16 @@
 
 				const userData = {
 					buyerName: 'Demo User',
+					name: 'Demo User',
 					buyerEmail: 'sandbox@payment.com',
+					email: 'sandbox@payment.com',
 					buyerPhone: '081234567890',
+					phone: '081234567890',
 					amount: $cartTotal.toString(),
 					imageUrl: 'https://demo.ipaymu.com/assets/images/product-7.jpg'
 				};
 
-				const res = await fetch('/api/checkout/ipaymu', {
+				const res = await fetch(`/api/checkout/${selectedPG.id}`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ mode: 'redirect', carts, userData })
@@ -78,7 +82,6 @@
 				isProcessing = false;
 			}
 		} else {
-			// PG lain (contoh: simulasi)
 			window.location.href = '/checkout/success';
 		}
 	}
@@ -294,7 +297,7 @@
 				<p class="text-caption mb-8 text-sm">
 					Looks like you haven't added anything to your cart yet.
 				</p>
-				<a href="/" class="bg-main rounded-full px-8 py-3 font-bold text-white">Start Shopping</a>
+				<a href="/" class="bg-main dark:text-card rounded-full px-8 py-3 font-bold text-white">Start Shopping</a>
 			</div>
 		{/if}
 	</div>

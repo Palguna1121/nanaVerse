@@ -28,7 +28,12 @@
     import { cartItems } from '$lib/stores/cart';
 
     async function selectMethod(method: any) {
-        if (pg?.name.toLowerCase().includes('ipaymu')) {
+        const pgId = pg?.id;
+
+        // PG yang punya integrasi real API
+        const realPGs = ['ipaymu', 'midtrans'];
+
+        if (pgId && realPGs.includes(pgId)) {
             isProcessing = true;
             selectedMethod = method;
             try {
@@ -45,14 +50,19 @@
 
                 const userData = {
                     name: "Demo User",
+                    buyerName: "Demo User",
                     email: "sandbox@payment.com",
+                    buyerEmail: "sandbox@payment.com",
                     phone: "081234567890",
+                    buyerPhone: "081234567890",
                     amount: $cartTotal.toString(),
                     paymentMethod: method.payMethod,
-                    paymentChannel: method.payChannel
+                    paymentChannel: method.payChannel,
+                    imageUrl: 'https://demo.ipaymu.com/assets/images/product-7.jpg'
                 };
 
-                const res = await fetch('/api/checkout/ipaymu', {
+                const endpoint = `/api/checkout/${pgId}`;
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ mode: 'direct', carts, userData })
@@ -62,19 +72,20 @@
                 
                 if (data.success && data.data?.Data) {
                     paymentData = data.data.Data;
-                    selectedMethod = method;
                     step = 2;
                 } else {
                     alert('Gagal mendapatkan kode pembayaran: ' + (data.message || 'Unknown error'));
+                    selectedMethod = null;
                 }
             } catch (err) {
                 console.error(err);
-                alert('Terjadi kesalahan saat menghubungi iPaymu.');
+                alert('Terjadi kesalahan saat menghubungi payment gateway.');
+                selectedMethod = null;
             } finally {
                 isProcessing = false;
             }
         } else {
-            // Simulasi dummy untuk PG lain
+            // Simulasi dummy untuk PG yang belum terintegrasi
             selectedMethod = method;
             step = 2;
         }
