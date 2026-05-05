@@ -19,7 +19,12 @@
     );
 
     let heroProducts = $derived(products.filter(p => p.is_new).slice(0, 3));
+    import MobileHome from '$lib/components/pages/MobileHome.svelte';
 </script>
+
+<MobileHome />
+
+<div class="hidden lg:block">
 
 {#if !category && !isPromo && !isNew}
     <HeroSlider products={heroProducts} />
@@ -29,24 +34,25 @@
     <div class="flex flex-col sm:flex-row sm:items-center gap-4">
         <h2 class="text-2xl font-heading font-bold text-main leading-[1.2] tracking-tight">
             {#if isPromo}
-                Produk Promo
+                Promo Products
             {:else}
-                {category === 'tech' ? 'Technology' : category === 'fashion' ? 'Fashion Outfit' : isNew ? 'Koleksi Terbaru' : 'Semua Produk'}
+                {category === 'tech' ? 'Technology' : category === 'fashion' ? 'Fashion Outfit' : isNew ? 'Latest Collection' : 'All Products'}
             {/if}
         </h2>
         
         <!-- Filter Tabs -->
         <div class="flex items-center space-x-1 bg-card-elevated rounded-full p-1 border border-border-light w-fit">
-            <a href="/" class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 {(!isPromo && !isNew) ? 'bg-card text-main shadow-soft' : 'text-muted hover:text-main'}">Semua</a>
+            <a href="/" class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 {(!isPromo && !isNew) ? 'bg-card text-main shadow-soft' : 'text-muted hover:text-main'}">All</a>
             <a href="/?promo=1" class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 {isPromo ? 'bg-card text-main shadow-soft' : 'text-muted hover:text-main'}">Promo</a>
-            <a href="/?new=1" class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 {isNew ? 'bg-card text-main shadow-soft' : 'text-muted hover:text-main'}">Baru</a>
+            <a href="/?new=1" class="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 {isNew ? 'bg-card text-main shadow-soft' : 'text-muted hover:text-main'}">New</a>
         </div>
     </div>
-    <div class="text-sm font-body font-normal text-muted">Menampilkan {filteredProducts.length} item</div>
+    <div class="text-sm font-body font-normal text-muted">Showing {filteredProducts.length} items</div>
 </div>
 
 <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     {#each filteredProducts as product (product.id)}
         <ProductCard {product} />
     {/each}
+</div>
 </div>

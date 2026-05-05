@@ -15,7 +15,7 @@
     }
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price).replace('Rp', 'Rp');
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price).replace('IDR', 'Rp');
     };
 </script>
 
@@ -25,7 +25,7 @@
         <!-- Flags -->
         <div class="absolute top-3 left-3 flex flex-col gap-2">
             {#if product.is_new}
-                <span class="bg-mint text-banner-text-mint text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">Baru</span>
+                <span class="bg-mint text-banner-text-mint text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">New</span>
             {/if}
             {#if product.is_promo}
                 <span class="bg-brand text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">Promo</span>
@@ -46,7 +46,7 @@
             <button 
                 onclick={handleAddToCart}
                 class="flex items-center justify-center w-10 h-10 rounded-full bg-brand text-white hover:bg-brand-hover transition-colors duration-200" 
-                title="Tambah ke keranjang"
+                title="Add to cart"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             </button>

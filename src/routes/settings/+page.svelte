@@ -26,7 +26,7 @@
 		if (!browser) return;
 
 		if (!PUBLIC_XEPENG_CLIENT_ID || !PUBLIC_XEPENG_CLIENT_SECRET) {
-			alert('Kredensial SSO belum dikonfigurasi di file .env!');
+			alert('SSO credentials are not configured in the .env file!');
 			return;
 		}
 
@@ -44,7 +44,7 @@
 			const url = await oauth.getAuthorizationUrl();
 			window.location.href = url;
 		} catch (error) {
-			console.error('Gagal mendapatkan URL otorisasi:', error);
+			console.error('Failed to get authorization URL:', error);
 			isLoading = false;
 		}
 	}
@@ -57,16 +57,21 @@
 			userInfo = null;
 		}
 	}
+	import MobileSettings from '$lib/components/pages/MobileSettings.svelte';
 </script>
+
+<MobileSettings />
+
+<div class="hidden lg:block">
 
 <div class="w-full py-4">
 	<div class="mb-10 flex items-center gap-4">
 		<h1 class="font-heading text-main text-3xl leading-tight font-bold tracking-tight md:text-4xl">
-			Pengaturan
+			Settings
 		</h1>
 	</div>
 
-	<!-- Detail Konten -->
+	<!-- Content Detail -->
 	<div class="w-full">
 		{#if activeTab === 'info'}
 			<div
@@ -90,7 +95,7 @@
 						<label
 							for="full-name"
 							class="font-heading text-caption mb-2 block text-xs font-bold tracking-wider uppercase"
-							>Nama Lengkap</label
+							>Full Name</label
 						>
 						<input
 							id="full-name"
@@ -105,7 +110,7 @@
 						<label
 							for="email"
 							class="font-heading text-caption mb-2 block text-xs font-bold tracking-wider uppercase"
-							>Alamat Email</label
+							>Email Address</label
 						>
 						<input
 							id="email"
@@ -120,21 +125,21 @@
 						<div>
 							<span
 								class="font-heading text-caption mb-2 block text-xs font-bold tracking-wider uppercase"
-								>Status Akun</span
+								>Account Status</span
 							>
 							<span
 								class="inline-flex items-center gap-2 rounded-full bg-green-500/10 px-3 py-1.5 text-xs font-bold tracking-wide text-green-500 uppercase"
 							>
 								<span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
-								Terverifikasi
+								Verified
 							</span>
 						</div>
 						<div>
 							<span
 								class="font-heading text-caption mb-2 block text-xs font-bold tracking-wider uppercase"
-								>Bergabung Sejak</span
+								>Joined Since</span
 							>
-							<p class="text-main font-body mt-1 text-sm font-semibold">28 April 2026</p>
+							<p class="text-main font-body mt-1 text-sm font-semibold">April 28, 2026</p>
 						</div>
 					</div>
 				</div>
@@ -144,8 +149,8 @@
 				in:fade={{ duration: 200 }}
 				class="bg-card shadow-soft border-border-light relative overflow-hidden rounded-[24px] border p-6 md:p-8"
 			>
-				<h3 class="font-heading text-main mb-2 text-xl font-bold">Autentikasi & SSO</h3>
-				<p class="text-caption mb-6 text-sm">Hubungkan akun Anda dengan layanan pihak ketiga.</p>
+				<h3 class="font-heading text-main mb-2 text-xl font-bold">Authentication & SSO</h3>
+				<p class="text-caption mb-6 text-sm">Connect your account with third-party services.</p>
 
 				<div class="space-y-4">
 					<div
@@ -162,10 +167,10 @@
 								{#if isConnected}
 									<p class="mt-0.5 flex items-center gap-1 text-xs font-semibold text-green-500">
 										<span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
-										Terhubung
+										Connected
 									</p>
 								{:else}
-									<p class="text-caption mt-0.5 text-xs">Otorisasi pembayaran otomatis & instan</p>
+									<p class="text-caption mt-0.5 text-xs">Automated & instant payment authorization</p>
 								{/if}
 							</div>
 						</div>
@@ -195,21 +200,21 @@
 										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 									></path>
 								</svg>
-								Memproses...
+								Processing...
 							</button>
 						{:else if isConnected}
 							<button
 								onclick={handleDisconnect}
 								class="rounded-full bg-red-500/10 px-5 py-2.5 text-sm font-semibold text-red-500 transition-all duration-200 hover:bg-red-500/20"
 							>
-								Putuskan Koneksi
+								Disconnect
 							</button>
 						{:else}
 							<button
 								onclick={handleSSOLogin}
 								class="bg-brand hover:bg-brand-hover shadow-soft rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
 							>
-								Hubungkan SSO
+								Connect SSO
 							</button>
 						{/if}
 					</div>
@@ -217,4 +222,5 @@
 			</div>
 		{/if}
 	</div>
+</div>
 </div>

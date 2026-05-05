@@ -3,11 +3,11 @@
     import { products } from '$lib/data';
     import { addToCart } from '$lib/stores/cart';
 
-    const id = parseInt($page.params.id || '0');
+    const id = $page.params.id || '';
     const product = products.find(p => p.id === id);
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price).replace('Rp', 'Rp');
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price).replace('IDR', 'Rp');
     };
 
     function handleAddToCart(e: MouseEvent) {
@@ -22,15 +22,19 @@
             (e.currentTarget as HTMLElement).dispatchEvent(customEvent);
         }
     }
+    import MobileProductDetail from '$lib/components/pages/MobileProductDetail.svelte';
 </script>
 
 {#if product}
+    <MobileProductDetail {product} />
+    
+    <div class="hidden lg:block">
 <div class="w-full">
     <!-- Breadcrumb -->
     <nav class="flex mb-8 text-sm font-body font-normal text-muted" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
             <li class="inline-flex items-center">
-                <a href="/" class="hover:text-main transition-colors">Produk</a>
+                <a href="/" class="hover:text-main transition-colors">Products</a>
             </li>
             <li>
                 <div class="flex items-center">
@@ -60,7 +64,7 @@
 
                 <div class="prose prose-sm font-body font-normal text-muted leading-[1.7] mb-8">
                     <p>{product.description}</p>
-                    <p class="mt-4">Nikmati kemudahan berbelanja dengan produk premium. Produk ini didesain khusus untuk memenuhi standar minimalis organik yang mengedepankan fungsi serta estetika elegan dalam keseharian Anda.</p>
+                    <p class="mt-4">Enjoy the convenience of shopping with premium products. This product is specially designed to meet minimalist organic standards that prioritize function and elegant aesthetics in your daily life.</p>
                 </div>
 
                 <div class="mt-auto pt-8 border-t border-border-light">
@@ -75,17 +79,18 @@
                             class="flex-1 flex items-center justify-center h-12 rounded-full bg-brand text-white font-body font-semibold text-base hover:bg-brand-hover transition-colors duration-200"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                            Tambah ke Keranjang
+                            Add to Cart
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 </div>
 {:else}
     <div class="text-center py-20">
-        <h2 class="text-2xl font-bold">Produk tidak ditemukan</h2>
-        <a href="/" class="text-brand mt-4 inline-block">Kembali ke Beranda</a>
+        <h2 class="text-2xl font-bold font-heading text-main">Product Not Found</h2>
+        <a href="/" class="text-brand font-bold mt-4 inline-block hover:underline">Back to Home</a>
     </div>
 {/if}

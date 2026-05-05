@@ -10,7 +10,7 @@
         clearCart();
         orderNumber = `NV-${Math.floor(100000 + Math.random() * 900000)}`;
         const now = new Date();
-        transactionDate = now.toLocaleDateString('id-ID', { 
+        transactionDate = now.toLocaleDateString('en-US', { 
             day: 'numeric', 
             month: 'long', 
             year: 'numeric',
@@ -36,26 +36,26 @@
             </svg>
         </div>
 
-        <h1 class="text-3xl md:text-4xl font-heading font-bold text-main mb-3 tracking-tight leading-tight">Pembayaran Berhasil!</h1>
+        <h1 class="text-3xl md:text-4xl font-heading font-bold text-main mb-3 tracking-tight leading-tight">Payment Successful!</h1>
         <p class="text-muted font-body text-base md:text-lg mb-10 max-w-md mx-auto">
-            Terima kasih! Pesanan Anda telah diterima dan akan segera kami proses untuk pengiriman.
+            Thank you! Your order has been received and we will process it for shipping immediately.
         </p>
 
         <!-- Transaction Details - Premium Design -->
         <div class="bg-card-elevated rounded-[24px] p-6 md:p-8 border border-border-light mb-10 text-left relative z-10">
-            <h3 class="text-sm font-heading font-bold text-main uppercase tracking-wider mb-4 pb-2 border-b border-border-light/50">Detail Transaksi</h3>
+            <h3 class="text-sm font-heading font-bold text-main uppercase tracking-wider mb-4 pb-2 border-b border-border-light/50">Transaction Details</h3>
             
             <div class="space-y-4">
                 <div class="flex justify-between items-center">
-                    <span class="text-caption text-sm font-body">Nomor Pesanan</span>
+                    <span class="text-caption text-sm font-body">Order Number</span>
                     <span class="font-semibold text-main font-body text-base">{orderNumber}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-caption text-sm font-body">Waktu Transaksi</span>
+                    <span class="text-caption text-sm font-body">Transaction Time</span>
                     <span class="text-main font-medium font-body text-sm">{transactionDate}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-caption text-sm font-body">Metode Pembayaran</span>
+                    <span class="text-caption text-sm font-body">Payment Method</span>
                     <span class="flex items-center gap-2 font-semibold text-main font-body text-sm">
                         <span class="w-2 h-2 rounded-full bg-green-500"></span>
                         Xepeng
@@ -74,7 +74,7 @@
                 href="/" 
                 class="block w-full py-4 rounded-full bg-brand text-white font-heading font-semibold text-center text-base shadow-soft hover:bg-brand-hover hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
             >
-                Kembali Berbelanja
+                Back to Shopping
             </a>
         </div>
     </div>

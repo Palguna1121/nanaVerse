@@ -3,6 +3,7 @@
     import Navbar from '$lib/components/Navbar.svelte';
     import Sidebar from '$lib/components/Sidebar.svelte';
     import Footer from '$lib/components/Footer.svelte';
+    import BottomNav from '$lib/components/BottomNav.svelte';
     import Toast from '$lib/components/Toast.svelte';
     import { onMount } from 'svelte';
 
@@ -57,13 +58,13 @@
     }
 </script>
 
-<div id="layout-root" class="flex flex-col min-h-screen">
+<div id="layout-root" class="bg-warm-bg flex flex-col min-h-screen transition-colors duration-300">
     <Navbar />
     
-    <div class="flex-1 flex max-w-7xl mx-auto w-full px-6">
+    <div class="flex-1 flex max-w-7xl mx-auto w-full lg:px-6">
         <Sidebar />
         
-        <main class="flex-1 py-10 lg:pl-10 relative">
+        <main class="flex-1 py-6 lg:py-10 lg:pl-10 relative">
             <Toast 
                 message={toastMessage} 
                 visible={showToast} 
@@ -74,5 +75,9 @@
         </main>
     </div>
 
-    <Footer />
+    <div class="hidden lg:block">
+        <Footer />
+    </div>
+    
+    <BottomNav />
 </div>

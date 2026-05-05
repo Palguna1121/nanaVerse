@@ -11,12 +11,26 @@
 	let isNewActive = $derived(browser ? $page.url.searchParams.has('new') : false);
 </script>
 
-<header class="bg-card border-border-light sticky top-0 z-50 h-20 border-b shadow-sm">
+<header class="bg-card border-border-light sticky top-0 z-50 h-20 border-b shadow-sm hidden lg:block">
 	<div class="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
-		<div class="flex items-center gap-8">
-			<a href="/" class="font-heading text-main text-2xl font-bold tracking-tight"
+		<div class="flex items-center gap-4 flex-1">
+			<a href="/" class="font-heading text-main text-xl font-bold tracking-tight shrink-0"
 				>nana<span class="text-brand">Verse</span></a
 			>
+			
+			<div class="relative w-full max-w-xs hidden lg:block ml-4">
+				<form action="/search" method="GET">
+					<span class="absolute top-1/2 left-4 -translate-y-1/2 text-muted">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+					</span>
+					<input 
+						type="text" 
+						name="q"
+						placeholder="Search products..." 
+						class="w-full bg-card-elevated border border-border-light rounded-full py-2 pl-10 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all"
+					/>
+				</form>
+			</div>
 		</div>
 
 		<div class="flex items-center gap-6">

@@ -6,11 +6,11 @@ export interface CartItem extends Product {
     quantity: number;
 }
 
-const initialCart: Record<number, CartItem> = browser && localStorage.getItem('cart') 
+const initialCart: Record<string, CartItem> = browser && localStorage.getItem('cart') 
     ? JSON.parse(localStorage.getItem('cart')!) 
     : {};
 
-export const cart = writable<Record<number, CartItem>>(initialCart);
+export const cart = writable<Record<string, CartItem>>(initialCart);
 
 if (browser) {
     cart.subscribe(value => {
@@ -29,14 +29,14 @@ export const addToCart = (product: Product) => {
     });
 };
 
-export const removeFromCart = (productId: number) => {
+export const removeFromCart = (productId: string) => {
     cart.update(items => {
         delete items[productId];
         return items;
     });
 };
 
-export const updateQuantity = (productId: number, action: 'increase' | 'decrease') => {
+export const updateQuantity = (productId: string, action: 'increase' | 'decrease') => {
     cart.update(items => {
         if (items[productId]) {
             if (action === 'increase') {

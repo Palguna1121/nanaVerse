@@ -1,15 +1,15 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-const initialTheme = browser && (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches))
-    ? 'dark'
-    : 'light';
+type Theme = 'light' | 'dark';
 
-export const theme = writable<string>(initialTheme);
+const initialTheme: Theme = browser && localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+
+export const theme = writable<Theme>(initialTheme);
 
 if (browser) {
     theme.subscribe(value => {
-        localStorage.theme = value;
+        localStorage.setItem('theme', value);
         if (value === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
@@ -17,7 +17,3 @@ if (browser) {
         }
     });
 }
-
-export const toggleTheme = () => {
-    theme.update(current => current === 'dark' ? 'light' : 'dark');
-};
