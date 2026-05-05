@@ -1,0 +1,106 @@
+@import 'tailwindcss';
+
+@theme {
+    --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+        
+    --color-warm-bg: var(--warm-bg);
+    --color-main: var(--main);
+    --color-muted: var(--muted);
+    --color-caption: var(--caption);
+    --color-brand: var(--brand);
+    --color-brand-hover: var(--brand-hover);
+    --color-border-light: var(--border-light);
+    
+    --color-mint: var(--mint);
+    --color-banner-text-mint: var(--banner-text-mint);
+    --color-banner-border-mint: var(--banner-border-mint);
+    
+    --color-peach: var(--peach);
+    --color-banner-text-peach: var(--banner-text-peach);
+    --color-banner-border-peach: var(--banner-border-peach);
+    
+    --color-banana: var(--banana);
+    --color-banner-text-banana: var(--banner-text-banana);
+    --color-banner-border-banana: var(--banner-border-banana);
+    
+    --color-nav-active: var(--nav-active);
+    --color-nav-text: var(--nav-text);
+    
+    --color-card: var(--card);
+    --color-card-elevated: var(--card-elevated);
+
+    --shadow-soft: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+@layer base {
+    :root {
+        --warm-bg: #F8F8F6;
+        --main: #1A1A1A;
+        --muted: #6B6B6B;
+        --caption: #9B9B9B;
+        --brand: #2563EB;
+        --brand-hover: #1D4ED8;
+        --border-light: #E8E8E4;
+        
+        --mint: #D4F0E4;
+        --banner-text-mint: #1A1A1A;
+        --banner-border-mint: #D4F0E4;
+
+        --peach: #FAE8E0;
+        --banner-text-peach: #1A1A1A;
+        --banner-border-peach: #FAE8E0;
+
+        --banana: #FFF3D6;
+        --banner-text-banana: #1A1A1A;
+        --banner-border-banana: #FFF3D6;
+
+        --nav-active: #EEF3FF;
+        --nav-text: #2563EB;
+        
+        --card: #FFFFFF;
+        --card-elevated: #F9FAFB;
+    }
+    
+    .dark {
+        --warm-bg: #141412;
+        --main: #F0EFE8;
+        --muted: #A8A8A0;
+        --caption: #A8A8A0;
+        --brand: #3B7EF6;
+        --brand-hover: #6FA3F8;
+        --border-light: #2A2A26;
+        
+        --mint: #0D2A1F;
+        --banner-text-mint: #9FE1CB;
+        --banner-border-mint: #1A4030;
+
+        --peach: #2A1510;
+        --banner-text-peach: #F0997B;
+        --banner-border-peach: #3A2018;
+
+        --banana: #2A2010;
+        --banner-text-banana: #FAC775;
+        --banner-border-banana: #3A2E14;
+
+        --nav-active: #1E2D4A;
+        --nav-text: #6FA3F8;
+        
+        --card: #1C1C19;
+        --card-elevated: #252522;
+    }
+}
+
+@layer utilities {
+    .fly-to-cart {
+        position: fixed;
+        z-index: 9999;
+        pointer-events: none;
+        transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        border-radius: 12px;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+}
