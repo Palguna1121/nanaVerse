@@ -17,3 +17,8 @@ if (browser) {
         }
     });
 }
+
+export const toggleTheme = () => {
+    theme.update(t => t === 'dark' ? 'light' : 'dark');
+};
+

@@ -45,6 +45,7 @@
 		"vitest-browser-svelte": "^2.1.0"
 	},
 	"dependencies": {
+		"ipaymu-nodejs-api": "^1.0.1",
 		"xepeng-oauth-js": "^1.0.2"
 	}
 }

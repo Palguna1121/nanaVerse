@@ -26,6 +26,7 @@
         </a>
         
         <button 
+            aria-label="Add to cart"
             onclick={handleAddToCart}
             class="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-main text-white dark:text-card flex items-center justify-center shadow-lg active:scale-90 transition-transform"
         >

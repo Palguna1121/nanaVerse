@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { OAuthClient } from 'xepeng-oauth-js';
 	import { PUBLIC_XEPENG_CLIENT_ID, PUBLIC_XEPENG_CLIENT_SECRET } from '$env/static/public';
+	import { paymentGateways } from '$lib/stores/payment';
 
 	let activeTab = $derived(browser ? $page.url.searchParams.get('tab') || 'info' : 'info');
 
@@ -57,6 +58,47 @@
 			userInfo = null;
 		}
 	}
+
+    let showPGModal = $state(false);
+    let pendingPG = $state<any>(null);
+
+    let showModeModal = $state(false);
+    let pendingMode = $state<{ pg: any, mode: 'direct' | 'redirect' } | null>(null);
+
+    function requestPGChange(pg: any) {
+        if (pg.enabled) return; 
+        pendingPG = pg;
+        showPGModal = true;
+    }
+
+    function confirmPGChange() {
+        if (pendingPG) {
+            paymentGateways.update(gateways => 
+                gateways.map(g => ({ ...g, enabled: g.id === pendingPG.id }))
+            );
+			import('$lib/stores/payment').then(m => m.activeGatewayId.set(pendingPG.id));
+        }
+        showPGModal = false;
+        pendingPG = null;
+    }
+
+    function requestModeChange(pg: any, mode: 'direct' | 'redirect') {
+        if (pg.mode === mode) return;
+        pendingMode = { pg, mode };
+        showModeModal = true;
+    }
+
+    function confirmModeChange() {
+        if (pendingMode) {
+            const { pg, mode } = pendingMode;
+            paymentGateways.update(gateways => 
+                gateways.map(g => g.id === pg.id ? { ...g, mode } : g)
+            );
+        }
+        showModeModal = false;
+        pendingMode = null;
+    }
+
 	import MobileSettings from '$lib/components/pages/MobileSettings.svelte';
 </script>
 
@@ -65,10 +107,25 @@
 <div class="hidden lg:block">
 
 <div class="w-full py-4">
-	<div class="mb-10 flex items-center gap-4">
+	<div class="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 		<h1 class="font-heading text-main text-3xl leading-tight font-bold tracking-tight md:text-4xl">
 			Settings
 		</h1>
+
+		<div class="bg-card border border-border-light rounded-xl p-1 flex gap-1 shadow-sm shrink-0">
+			{#each [
+				{ id: 'info', label: 'Profile Info' },
+				{ id: 'auth', label: 'Auth & SSO' },
+				{ id: 'payment', label: 'Payment PG' }
+			] as tab}
+				<a 
+					href="?tab={tab.id}" 
+					class="px-4 py-2 text-xs font-bold rounded-lg transition-all {activeTab === tab.id ? 'bg-main text-white dark:text-card shadow-md' : 'text-caption hover:bg-card-elevated'}"
+				>
+					{tab.label}
+				</a>
+			{/each}
+		</div>
 	</div>
 
 	<!-- Content Detail -->
@@ -220,7 +277,104 @@
 					</div>
 				</div>
 			</div>
+		{:else if activeTab === 'payment'}
+			<div
+				in:fade={{ duration: 200 }}
+				class="bg-card shadow-soft border-border-light relative overflow-hidden rounded-[24px] border p-6 md:p-8"
+			>
+				<h3 class="font-heading text-main mb-2 text-xl font-bold">Payment Gateways</h3>
+				<p class="text-caption mb-8 text-sm">Configure available payment providers and checkout flow.</p>
+
+				<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+					{#each $paymentGateways as pg}
+						<div class="bg-card-elevated border-border-light rounded-2xl border p-6 flex flex-col justify-between gap-6 transition-all hover:border-brand/30">
+							<div class="flex items-start justify-between">
+								<div class="flex items-center gap-4">
+									<div class="w-12 h-12 rounded-xl bg-card border border-border-light flex items-center justify-center text-brand font-bold text-lg">
+										{pg.name?.[0] || '?'}
+									</div>
+									<div>
+										<h4 class="font-heading text-main text-base font-semibold">{pg?.name}</h4>
+										<p class="text-caption text-xs mt-0.5">{pg?.description}</p>
+									</div>
+								</div>
+								<button 
+									aria-label="Toggle {pg?.name}"
+									onclick={() => requestPGChange(pg)}
+									class="w-12 h-6 rounded-full p-1 transition-colors {pg.enabled ? 'bg-green-500' : 'bg-border-light dark:bg-main/10'}"
+								>
+									<div class="w-4 h-4 rounded-full bg-white transition-transform {pg.enabled ? 'translate-x-6' : 'translate-x-0'} shadow-sm"></div>
+								</button>
+							</div>
+
+							{#if pg.enabled && pg.allowModeSwitch}
+								<div class="flex flex-col gap-3 pt-4 border-t border-border-light">
+									<p class="text-[10px] font-bold text-caption uppercase tracking-widest">Integration Mode</p>
+									<div class="flex gap-2 p-1 bg-card rounded-xl border border-border-light">
+										<button 
+											onclick={() => requestModeChange(pg, 'redirect')}
+											class="flex-1 py-2 text-xs font-bold rounded-lg transition-all {pg.mode === 'redirect' ? 'bg-main text-white dark:text-card shadow-md' : 'text-caption hover:bg-card-elevated'}"
+										>
+											Redirect
+										</button>
+										<button 
+											onclick={() => requestModeChange(pg, 'direct')}
+											class="flex-1 py-2 text-xs font-bold rounded-lg transition-all {pg.mode === 'direct' ? 'bg-main text-white dark:text-card shadow-md' : 'text-caption hover:bg-card-elevated'}"
+										>
+											Direct
+										</button>
+									</div>
+								</div>
+							{:else if pg.enabled && !pg.allowModeSwitch}
+								<div class="pt-4 border-t border-border-light flex items-center gap-2">
+									<div class="px-3 py-1 bg-brand/10 text-brand rounded-full text-[10px] font-bold uppercase">
+										Redirect Only
+									</div>
+									<span class="text-[10px] text-caption font-medium">Locked mode for security</span>
+								</div>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>
 </div>
+
+{#if showPGModal}
+    <div class="fixed inset-0 z-100 flex items-center justify-center px-6">
+        <div role="button" tabindex="0" class="absolute inset-0 bg-main/60 backdrop-blur-sm" onclick={() => showPGModal = false} onkeydown={(e) => e.key === 'Enter' && (showPGModal = false)} aria-label="Close"></div>
+        <div class="relative bg-card rounded-[32px] p-8 w-full max-w-sm text-center border border-border-light shadow-2xl">
+            <h3 class="text-xl font-heading font-bold text-main mb-2">Change Gateway?</h3>
+            <p class="text-sm text-caption mb-8">Are you sure you want to activate <strong>{pendingPG?.name}</strong>? This will disable the currently active gateway.</p>
+            <div class="flex gap-4">
+                <button onclick={() => showPGModal = false} class="flex-1 py-3 rounded-full bg-card-elevated font-bold text-main">Cancel</button>
+                <button onclick={confirmPGChange} class="flex-1 py-3 rounded-full bg-brand text-white font-bold">Yes</button>
+            </div>
+        </div>
+    </div>
+{/if}
+
+{#if showModeModal}
+    <div class="fixed inset-0 z-100 flex items-center justify-center px-6">
+        <div role="button" tabindex="0" class="absolute inset-0 bg-main/60 backdrop-blur-sm" onclick={() => showModeModal = false} onkeydown={(e) => e.key === 'Enter' && (showModeModal = false)} aria-label="Close"></div>
+        <div class="relative bg-card rounded-[32px] p-8 w-full max-w-sm text-center border border-border-light shadow-2xl">
+            <h3 class="text-xl font-heading font-bold text-main mb-2">Change Mode?</h3>
+            <div class="text-sm text-caption mb-8 text-left space-y-3">
+                <p>Switch <strong>{pendingMode?.pg?.name}</strong> to <strong class="uppercase text-main">{pendingMode?.mode}</strong> mode?</p>
+                <div class="bg-card-elevated p-3 rounded-xl border border-border-light">
+                    {#if pendingMode?.mode === 'direct'}
+                        <p class="text-xs"><strong>Direct:</strong> User selects payment method (QRIS/VA) within checkout directly.</p>
+                    {:else}
+                        <p class="text-xs"><strong>Redirect:</strong> User is sent to the gateway's hosted payment page.</p>
+                    {/if}
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick={() => showModeModal = false} class="flex-1 py-3 rounded-full bg-card-elevated font-bold text-main">Cancel</button>
+                <button onclick={confirmModeChange} class="flex-1 py-3 rounded-full bg-brand text-white font-bold">Confirm</button>
+            </div>
+        </div>
+    </div>
+{/if}

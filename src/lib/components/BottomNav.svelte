@@ -34,7 +34,7 @@
 
 {#if !isNavHidden}
 <div 
-    class="lg:hidden fixed bottom-0 left-0 right-0 z-[60] transition-all duration-500 transform {isVisible ? 'translate-y-0' : 'translate-y-full'}"
+    class="lg:hidden fixed bottom-0 left-0 right-0 z-60 transition-all duration-500 transform {isVisible ? 'translate-y-0' : 'translate-y-full'}"
 >
     <div class="bg-card/80 backdrop-blur-xl rounded-t-[28px] px-8 py-4 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border-t border-border-light transition-colors duration-300">
         {#each menu as item}

@@ -1,10 +1,51 @@
 <script lang="ts">
     import { fade, fly } from 'svelte/transition';
     import { theme } from '$lib/stores/theme';
+    import { paymentGateways, activeGatewayId, type PaymentGateway } from '$lib/stores/payment';
     let location = $state('New York, USA');
 
     function toggleTheme() {
         theme.update(t => t === 'dark' ? 'light' : 'dark');
+    }
+
+    let showPGModal = $state(false);
+    let pendingPG = $state<PaymentGateway | null>(null);
+
+    let showModeModal = $state(false);
+    let pendingMode = $state<{ pg: PaymentGateway, mode: 'direct' | 'redirect' } | null>(null);
+
+    function requestPGChange(pg: PaymentGateway) {
+        if (pg.enabled) return; 
+        pendingPG = pg;
+        showPGModal = true;
+    }
+
+    function confirmPGChange() {
+        if (pendingPG) {
+            paymentGateways.update(gateways => 
+                gateways.map(g => ({ ...g, enabled: g.id === pendingPG!.id }))
+            );
+            activeGatewayId.set(pendingPG.id);
+        }
+        showPGModal = false;
+        pendingPG = null;
+    }
+
+    function requestModeChange(pg: PaymentGateway, mode: 'direct' | 'redirect') {
+        if (pg.mode === mode) return;
+        pendingMode = { pg, mode };
+        showModeModal = true;
+    }
+
+    function confirmModeChange() {
+        if (pendingMode) {
+            const { pg, mode } = pendingMode;
+            paymentGateways.update(gateways => 
+                gateways.map(g => g.id === pg.id ? { ...g, mode } : g)
+            );
+        }
+        showModeModal = false;
+        pendingMode = null;
     }
 </script>
 
@@ -12,7 +53,7 @@
     <div class="px-6">
         <div class="flex items-center justify-between mb-8">
         <h1 class="text-2xl font-heading font-bold text-main">Profile</h1>
-        <button class="w-10 h-10 rounded-full bg-card-elevated border border-border-light flex items-center justify-center text-main">
+        <button aria-label="Toggle Theme" onclick={toggleTheme} class="w-10 h-10 rounded-full bg-card shadow-soft border border-border-light flex items-center justify-center text-main">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
     </div>
@@ -58,32 +99,87 @@
         </div>
 
         <div>
-            <h3 class="text-xs font-bold text-caption uppercase tracking-wider px-2 mb-4">Personal Info</h3>
+            <h3 class="text-xs font-bold text-caption uppercase tracking-wider px-2 mb-4">Payment Gateways</h3>
             <div class="bg-card border border-border-light rounded-[24px] overflow-hidden divide-y divide-border-light shadow-soft transition-colors">
-                <div class="p-5 flex items-center justify-between active:bg-card-elevated transition-colors">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-card-elevated flex items-center justify-center text-main">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                {#each $paymentGateways as pg}
+                    <div class="p-5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-card-elevated flex items-center justify-center text-main font-bold text-xs">
+                                    {pg.name?.[0] || '?'}
+                                </div>
+                                <div>
+                                    <span class="text-sm font-bold text-main block">{pg?.name}</span>
+                                    <span class="text-[10px] text-caption font-medium">{pg?.description}</span>
+                                </div>
+                            </div>
+                            <button 
+                                aria-label="Toggle {pg?.name}"
+                                onclick={() => requestPGChange(pg)}
+                                class="w-12 h-6 rounded-full p-1 transition-colors {pg.enabled ? 'bg-green-500' : 'bg-border-light'}"
+                            >
+                                <div class="w-4 h-4 rounded-full bg-white transition-transform {pg.enabled ? 'translate-x-6' : 'translate-x-0'} shadow-sm"></div>
+                            </button>
                         </div>
-                        <span class="text-sm font-bold text-main">Edit Profile</span>
+
+                        {#if pg.enabled && pg.allowModeSwitch}
+                            <div class="flex gap-2 p-1 bg-card-elevated rounded-xl border border-border-light">
+                                <button 
+                                    onclick={() => requestModeChange(pg, 'redirect')}
+                                    class="flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all {pg.mode === 'redirect' ? 'bg-card text-main shadow-sm border border-border-light' : 'text-caption'}"
+                                >
+                                    Redirect
+                                </button>
+                                <button 
+                                    onclick={() => requestModeChange(pg, 'direct')}
+                                    class="flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all {pg.mode === 'direct' ? 'bg-card text-main shadow-sm border border-border-light' : 'text-caption'}"
+                                >
+                                    Direct
+                                </button>
+                            </div>
+                        {/if}
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-caption"><path d="m9 18 6-6-6-6"/></svg>
-                </div>
-                <div class="p-5 flex items-center justify-between active:bg-card-elevated transition-colors">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-card-elevated flex items-center justify-center text-main">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        </div>
-                        <span class="text-sm font-bold text-main">Shipping Address</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-caption"><path d="m9 18 6-6-6-6"/></svg>
-                </div>
+                {/each}
             </div>
         </div>
 
-        <div class="mt-4">
-            <button class="w-full py-4 rounded-2xl bg-red-500/10 text-red-500 font-bold text-sm active:scale-95 transition-all">Logout Account</button>
-        </div>
     </div>
     </div>
 </div>
+
+{#if showPGModal}
+    <div class="fixed inset-0 z-100 flex items-center justify-center px-6">
+        <div role="button" tabindex="0" class="absolute inset-0 bg-main/60 backdrop-blur-sm" onclick={() => showPGModal = false} onkeydown={(e) => e.key === 'Enter' && (showPGModal = false)} aria-label="Close"></div>
+        <div in:fly={{ y: 20 }} class="relative bg-card rounded-[32px] p-8 w-full max-w-sm text-center border border-border-light shadow-2xl">
+            <h3 class="text-xl font-heading font-bold text-main mb-2">Change Gateway?</h3>
+            <p class="text-sm text-caption mb-8">Are you sure you want to activate <strong>{pendingPG?.name}</strong>? This will disable the currently active gateway.</p>
+            <div class="flex gap-4">
+                <button onclick={() => showPGModal = false} class="flex-1 py-3 rounded-full bg-card-elevated font-bold text-main">Cancel</button>
+                <button onclick={confirmPGChange} class="flex-1 py-3 rounded-full bg-brand text-white font-bold">Yes</button>
+            </div>
+        </div>
+    </div>
+{/if}
+
+{#if showModeModal}
+    <div class="fixed inset-0 z-100 flex items-center justify-center px-6">
+        <div role="button" tabindex="0" class="absolute inset-0 bg-main/60 backdrop-blur-sm" onclick={() => showModeModal = false} onkeydown={(e) => e.key === 'Enter' && (showModeModal = false)} aria-label="Close"></div>
+        <div in:fly={{ y: 20 }} class="relative bg-card rounded-[32px] p-8 w-full max-w-sm text-center border border-border-light shadow-2xl">
+            <h3 class="text-xl font-heading font-bold text-main mb-2">Change Mode?</h3>
+            <div class="text-sm text-caption mb-8 text-left space-y-3">
+                <p>Switch <strong>{pendingMode?.pg?.name}</strong> to <strong class="uppercase text-main">{pendingMode?.mode}</strong> mode?</p>
+                <div class="bg-card-elevated p-3 rounded-xl border border-border-light">
+                    {#if pendingMode?.mode === 'direct'}
+                        <p class="text-xs"><strong>Direct:</strong> User selects payment method (QRIS/VA) within checkout directly.</p>
+                    {:else}
+                        <p class="text-xs"><strong>Redirect:</strong> User is sent to the gateway's hosted payment page.</p>
+                    {/if}
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick={() => showModeModal = false} class="flex-1 py-3 rounded-full bg-card-elevated font-bold text-main">Cancel</button>
+                <button onclick={confirmModeChange} class="flex-1 py-3 rounded-full bg-brand text-white font-bold">Confirm</button>
+            </div>
+        </div>
+    </div>
+{/if}

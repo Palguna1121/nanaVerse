@@ -34,22 +34,22 @@
     <!-- Mobile Search Header -->
     <div class="lg:hidden px-6 pt-6 mb-8">
         <div class="flex items-center gap-4 mb-6">
-            <button onclick={() => history.back()} class="w-10 h-10 rounded-full bg-card shadow-soft border border-border-light flex items-center justify-center text-main">
+            <button aria-label="Go Back" onclick={() => history.back()} class="w-10 h-10 rounded-full bg-card shadow-soft border border-border-light flex items-center justify-center text-main">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             </button>
             <h1 class="text-lg font-heading font-bold text-main">Search Products</h1>
         </div>
 
-        <div class="relative">
-            <span class="absolute top-1/2 left-4 -translate-y-1/2 text-caption">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-            </span>
-            <input
-                type="text"
-                placeholder="What are you looking for?"
+        <!-- Search Bar -->
+        <div class="relative mb-6">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-caption"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            </div>
+            <input 
+                type="text" 
                 bind:value={searchQuery}
+                placeholder="Search products..." 
                 class="w-full bg-card-elevated border-border-light border py-3.5 pl-12 pr-4 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all"
-                autofocus
             />
         </div>
     </div>

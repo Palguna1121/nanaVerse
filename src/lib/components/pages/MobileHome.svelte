@@ -53,6 +53,7 @@
 			</a>
 
 			<button
+				aria-label="Notifications"
 				class="bg-card shadow-soft border-border-light text-main relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border"
 			>
 				<svg
@@ -114,6 +115,7 @@
 			<div class="mt-4 flex justify-center gap-2">
 				{#each heroProducts as _, i}
 					<button
+						aria-label="Slide {i + 1}"
 						onclick={() => (activeHero = i)}
 						class="h-1.5 rounded-full transition-all duration-500 {activeHero === i
 							? 'bg-main w-6'

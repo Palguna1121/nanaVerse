@@ -17,6 +17,9 @@
             <a href="/settings?tab=auth" class="block px-4 py-3 rounded-[12px] {activeTab === 'auth' ? 'bg-nav-active text-nav-text font-semibold' : 'text-muted hover:bg-card-elevated hover:text-main font-normal'} text-sm transition-all duration-200">
                 Authentication / SSO
             </a>
+            <a href="/settings?tab=payment" class="block px-4 py-3 rounded-[12px] {activeTab === 'payment' ? 'bg-nav-active text-nav-text font-semibold' : 'text-muted hover:bg-card-elevated hover:text-main font-normal'} text-sm transition-all duration-200">
+                Payment Settings
+            </a>
         </nav>
     {:else}
         <h3 class="text-xs font-heading font-bold text-caption uppercase tracking-wider mb-4">Explore</h3>

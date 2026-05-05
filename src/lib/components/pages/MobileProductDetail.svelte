@@ -56,11 +56,11 @@
     <div class="px-6">
         <!-- Top Nav -->
     <div class="flex items-center justify-between mb-6">
-        <button onclick={() => history.back()} class="w-12 h-12 rounded-full bg-card shadow-soft border border-border-light flex items-center justify-center text-main">
+        <button aria-label="Go Back" onclick={() => history.back()} class="w-12 h-12 rounded-full bg-card shadow-soft border border-border-light flex items-center justify-center text-main">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
         <h2 class="font-heading font-bold text-main">Product Details</h2>
-        <a href="/checkout" id="cart-icon" class="relative w-12 h-12 rounded-full bg-card shadow-soft border border-border-light flex items-center justify-center text-main">
+        <a href="/checkout" aria-label="Go to Cart" id="cart-icon" class="relative w-12 h-12 rounded-full bg-card shadow-soft border border-border-light flex items-center justify-center text-main">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             {#if $cartCount > 0}
                 <span class="absolute top-2 right-2 w-5 h-5 bg-brand text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-card">
@@ -91,7 +91,8 @@
         <div class="flex gap-3 mt-6 overflow-x-auto w-full no-scrollbar px-2">
             {#each Array(5) as _, i}
                 <button 
-                    class="w-16 h-16 rounded-2xl overflow-hidden border-2 {i === activeImageIndex ? 'border-brand' : 'border-border-light'} flex-shrink-0"
+                    aria-label="View Image {i + 1}"
+                    class="w-16 h-16 rounded-2xl overflow-hidden border-2 {i === activeImageIndex ? 'border-brand' : 'border-border-light'} shrink-0"
                     onclick={() => activeImageIndex = i}
                 >
                     <img src={product.image} alt="Thumb" class="w-full h-full object-cover opacity-80" />
@@ -150,7 +151,7 @@
 
 <!-- Bottom Action Bar -->
 <div 
-    class="lg:hidden fixed bottom-5 left-5 right-5 z-[70] transition-all duration-500 transform {isVisible ? 'translate-y-0 opacity-100' : 'translate-y-32 opacity-0'}"
+    class="lg:hidden fixed bottom-5 left-5 right-5 z-70 transition-all duration-500 transform {isVisible ? 'translate-y-0 opacity-100' : 'translate-y-32 opacity-0'}"
 >
     <div class="bg-card rounded-[24px] p-3.5 flex items-center justify-between shadow-[0_15px_40px_rgba(0,0,0,0.12)] border border-border-light">
         <div class="pl-2">
