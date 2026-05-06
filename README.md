@@ -81,7 +81,15 @@ Aplikasi ini menggunakan **Dual Adapter Strategy**:
 - **Local Build**: Menggunakan `@sveltejs/adapter-static` untuk hasil build statis di folder `build/`.
 - **Production (Cloudflare)**: Menggunakan `@sveltejs/adapter-cloudflare` secara otomatis jika mendeteksi environment `CF_PAGES`. Ini diperlukan agar API Routes (SSR) dapat berjalan di Cloudflare Workers.
 
-Untuk membuat build produksi:
+### ⚙️ Pengaturan di Dashboard Cloudflare Pages:
+Agar deployment berhasil, pastikan pengaturan di dashboard Cloudflare Pages Anda adalah sebagai berikut:
+- **Framework Preset**: `SvelteKit`
+- **Build Command**: `bun run build`
+- **Output Directory**: `.svelte-kit/cloudflare`
+- **Deploy Command**: (Kosongkan/Hapus jika ada)
+- **Environment Variables**: Masukkan semua variabel dari `.env.example` ke bagian Settings > Variables.
+
+Untuk membuat build produksi secara lokal:
 
 ```bash
 # Build aplikasi
