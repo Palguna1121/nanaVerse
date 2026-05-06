@@ -4,6 +4,12 @@
     import { paymentGateways, activeGatewayId, type PaymentGateway } from '$lib/stores/payment';
     let location = $state('New York, USA');
 
+    let { isConnected = false, isLoading = false, handleSSOLogin, handleDisconnect } = $props<{
+        isConnected?: boolean;
+        isLoading?: boolean;
+        handleSSOLogin?: () => void;
+        handleDisconnect?: () => void;
+    }>();
     function toggleTheme() {
         theme.update(t => t === 'dark' ? 'light' : 'dark');
     }
@@ -99,14 +105,54 @@
         </div>
 
         <div>
+            <h3 class="text-xs font-bold text-caption uppercase tracking-wider px-2 mb-4">Authentication & SSO</h3>
+            <div class="bg-card border border-border-light rounded-[24px] overflow-hidden shadow-soft transition-colors p-5">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-card-elevated flex items-center justify-center overflow-hidden p-1 shrink-0">
+                        <img src="/logo-xepeng.png" alt="Xepeng Logo" class="w-full h-full object-contain" onerror={(e) => (e.currentTarget as HTMLElement).style.display='none'} />
+                    </div>
+                    <div>
+                        <span class="text-sm font-bold text-main block">Xepeng Payment</span>
+                        {#if isConnected}
+                            <span class="mt-0.5 flex items-center gap-1 text-xs font-semibold text-green-500">
+                                <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                                Connected
+                            </span>
+                        {:else}
+                            <span class="text-[10px] text-caption font-medium">Automated payment authorization</span>
+                        {/if}
+                    </div>
+                </div>
+
+                {#if isLoading}
+                    <button disabled class="w-full bg-brand/50 flex justify-center items-center gap-2 rounded-xl py-3 text-sm font-semibold text-white">
+                        <svg class="h-4 w-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                    </button>
+                {:else if isConnected}
+                    <button onclick={handleDisconnect} class="w-full rounded-xl bg-red-500/10 py-3 text-sm font-semibold text-red-500 transition-all hover:bg-red-500/20">
+                        Disconnect
+                    </button>
+                {:else}
+                    <button onclick={handleSSOLogin} class="w-full bg-brand hover:bg-brand-hover shadow-sm rounded-xl py-3 text-sm font-semibold text-white transition-all hover:-translate-y-0.5">
+                        Connect SSO
+                    </button>
+                {/if}
+            </div>
+        </div>
+
+        <div>
             <h3 class="text-xs font-bold text-caption uppercase tracking-wider px-2 mb-4">Payment Gateways</h3>
             <div class="bg-card border border-border-light rounded-[24px] overflow-hidden divide-y divide-border-light shadow-soft transition-colors">
                 {#each $paymentGateways as pg}
                     <div class="p-5 space-y-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-card-elevated flex items-center justify-center text-main font-bold text-xs">
-                                    {pg.name?.[0] || '?'}
+                                <div class="w-10 h-10 rounded-xl bg-card-elevated flex items-center justify-center overflow-hidden p-1 shrink-0">
+                                    <img src="/logo-{pg.id}.png" alt="{pg.name} Logo" class="w-full h-full object-contain" onerror={(e) => (e.currentTarget as HTMLElement).style.display='none'} />
                                 </div>
                                 <div>
                                     <span class="text-sm font-bold text-main block">{pg?.name}</span>

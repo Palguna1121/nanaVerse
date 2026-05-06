@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { cartItems, cartCount, cartTotal, updateQuantity, clearCart } from '$lib/stores/cart';
 	import { paymentGateways, activeGatewayId } from '$lib/stores/payment';
+	import { browser } from '$app/environment';
 	import { fly, fade } from 'svelte/transition';
 
 	let showClearModal = $state(false);
@@ -24,9 +25,19 @@
 		$paymentGateways.find((g) => g.id === $activeGatewayId) || $paymentGateways[0]
 	);
 	let isProcessing = $state(false);
+	let showSSOModal = $state(false);
 
 	async function handleCheckout() {
 		if (!selectedPG) return;
+
+		// Validasi SSO Xepeng sebelum checkout
+		if (selectedPG.id === 'xepeng') {
+			const isXepengConnected = browser && !!localStorage.getItem('oauth_tokens');
+			if (!isXepengConnected) {
+				showSSOModal = true;
+				return;
+			}
+		}
 
 		if (selectedPG.mode === 'direct') {
 			window.location.href = `/checkout/direct/${selectedPG.id}`;
@@ -34,7 +45,8 @@
 		}
 
 		// PG yang punya integrasi real API (mode redirect)
-		const realPGs = ['ipaymu', 'midtrans'];
+		// const realPGs = ['ipaymu', 'midtrans', 'xepeng'];
+		const realPGs = ['ipaymu', 'xepeng'];
 
 		if (realPGs.includes(selectedPG.id)) {
 			isProcessing = true;
@@ -61,16 +73,31 @@
 					imageUrl: 'https://demo.ipaymu.com/assets/images/product-7.jpg'
 				};
 
+				// Susun payload, sertakan SSO creds jika Xepeng
+				const payload: Record<string, any> = { mode: 'redirect', carts, userData };
+				if (selectedPG.id === 'xepeng' && browser) {
+					try {
+						const ssoRaw = localStorage.getItem('xepeng_integration_creds');
+						if (ssoRaw) {
+							const creds = JSON.parse(ssoRaw);
+							payload.ssoClientId = creds.clientId;
+							payload.ssoClientSecret = creds.clientSecret;
+						}
+					} catch {}
+				}
+
 				const res = await fetch(`/api/checkout/${selectedPG.id}`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ mode: 'redirect', carts, userData })
+					body: JSON.stringify(payload)
 				});
 
 				const data = await res.json();
 
-				if (data.success && data.data?.Data?.Url) {
-					window.location.href = data.data.Data.Url;
+				// Support iPaymu/Midtrans (Data.Url) dan Xepeng (payment_url)
+				const redirectUrl = data.data?.Data?.Url || data.data?.payment_url;
+				if (data.success && redirectUrl) {
+					window.location.href = redirectUrl;
 				} else {
 					alert('Gagal membuat sesi pembayaran: ' + (data.message || 'Unknown error'));
 					isProcessing = false;
@@ -425,3 +452,56 @@
 		{/if}
 	</div>
 </div>
+
+{#if showSSOModal}
+	<div
+		class="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center sm:p-6"
+		in:fade={{ duration: 200 }}
+	>
+		<div
+			role="button"
+			tabindex="0"
+			class="bg-main/50 absolute inset-0 backdrop-blur-sm"
+			onclick={() => (showSSOModal = false)}
+			onkeydown={(e) => e.key === 'Escape' && (showSSOModal = false)}
+			aria-label="Tutup modal"
+		></div>
+		<div
+			in:fly={{ y: 30, duration: 300 }}
+			class="bg-card border-border-light relative w-full max-w-sm rounded-[28px] border p-7 shadow-2xl"
+		>
+			<!-- Icon -->
+			<div class="bg-brand/10 mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl">
+				<img
+					src="/logo-xepeng.png"
+					alt="Xepeng"
+					class="h-9 w-9 object-contain"
+					onerror={(e) => ((e.currentTarget as HTMLElement).style.display = 'none')}
+				/>
+			</div>
+
+			<h3 class="font-heading text-main mb-2 text-center text-xl font-bold">
+				Xepeng SSO Diperlukan
+			</h3>
+			<p class="text-caption mb-7 text-center text-sm leading-relaxed">
+				Untuk checkout dengan Xepeng, kamu perlu menghubungkan akun SSO terlebih dahulu di halaman
+				Settings.
+			</p>
+
+			<div class="flex flex-col gap-3">
+				<a
+					href="/settings?tab=auth"
+					class="bg-brand hover:bg-brand-hover w-full rounded-2xl py-3.5 text-center text-sm font-bold text-white transition-all active:scale-95"
+				>
+					Pergi ke Settings
+				</a>
+				<button
+					onclick={() => (showSSOModal = false)}
+					class="bg-card-elevated hover:bg-border-light text-main w-full rounded-2xl py-3.5 text-sm font-semibold transition-all active:scale-95"
+				>
+					Batal
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}

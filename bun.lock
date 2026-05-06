@@ -6,7 +6,7 @@
       "dependencies": {
         "ipaymu-nodejs-api": "^1.0.1",
         "midtrans-client": "^1.4.3",
-        "xepeng-oauth-js": "^1.0.2",
+        "xepeng-oauth-js": "1.1.2",
       },
       "devDependencies": {
         "@eslint/compat": "^2.0.4",
@@ -746,7 +746,7 @@
 
     "ws": ["ws@8.20.0", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA=="],
 
-    "xepeng-oauth-js": ["xepeng-oauth-js@1.0.2", "", { "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0", "vue": "^3.0.0" }, "optionalPeers": ["react", "vue"] }, "sha512-ofX4xFMaCyM21RVFyy5WFLzoHDy81U9Fw59mNaF6oPOQapWfNI/aC+gNpObZZ0EY4Q2v1LRPCCF9Iqjn7ALl2Q=="],
+    "xepeng-oauth-js": ["xepeng-oauth-js@1.1.2", "", { "dependencies": { "axios": "^1.6.0" }, "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0", "vue": "^3.0.0" }, "optionalPeers": ["react", "vue"] }, "sha512-hj5InD+lk3C68C7BRPf3xjdHurZXTwduW6UJboRFDAEVwmSvIDvWKrbfw+7GlrnfL9z4bjFZl+KtwoQpZVqCTw=="],
 
     "yaml": ["yaml@1.10.3", "", {}, "sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA=="],
 
@@ -813,6 +813,8 @@
     "vite/fsevents": ["fsevents@2.3.3", "", { "os": "darwin" }, "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="],
 
     "webpack/eslint-scope": ["eslint-scope@5.1.1", "", { "dependencies": { "esrecurse": "^4.3.0", "estraverse": "^4.1.1" } }, "sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw=="],
+
+    "xepeng-oauth-js/axios": ["axios@1.16.0", "", { "dependencies": { "follow-redirects": "^1.16.0", "form-data": "^4.0.5", "proxy-from-env": "^2.1.0" } }, "sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w=="],
 
     "ajv-formats/ajv/json-schema-traverse": ["json-schema-traverse@1.0.0", "", {}, "sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug=="],
 

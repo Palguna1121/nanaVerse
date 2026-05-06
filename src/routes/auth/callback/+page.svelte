@@ -8,8 +8,8 @@
 
     onMount(async () => {
         if (browser) {
-            if (!PUBLIC_XEPENG_CLIENT_ID || !PUBLIC_XEPENG_CLIENT_SECRET) {
-                errorMsg = 'Kredensial SSO belum dikonfigurasi di file .env!';
+            if (!PUBLIC_XEPENG_CLIENT_ID) {
+                errorMsg = 'XEPENG_CLIENT_ID belum dikonfigurasi di file .env!';
                 return;
             }
 
@@ -28,10 +28,14 @@
                 
                 // Simpan tokens standard
                 localStorage.setItem('oauth_tokens', JSON.stringify(response));
-                
-                // Simpan RAW data untuk debugging user
-                localStorage.setItem('xepeng_raw_sso', JSON.stringify(response));
-                console.log('Xepeng SSO Raw Response:', response);
+
+                // Simpan integration credentials dari SSO response (client_id & client_secret baru)
+                if (response.client_id && response.client_secret) {
+                    localStorage.setItem('xepeng_integration_creds', JSON.stringify({
+                        clientId: response.client_id,
+                        clientSecret: response.client_secret
+                    }));
+                }
 
                 // Redirect kembali ke halaman settings
                 window.location.href = '/settings?tab=auth';

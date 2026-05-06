@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { OAuthClient } from 'xepeng-oauth-js';
 	import { PUBLIC_XEPENG_CLIENT_ID, PUBLIC_XEPENG_CLIENT_SECRET } from '$env/static/public';
-	import { paymentGateways } from '$lib/stores/payment';
+	import { paymentGateways, activeGatewayId } from '$lib/stores/payment';
 
 	let activeTab = $derived(browser ? $page.url.searchParams.get('tab') || 'info' : 'info');
 
@@ -26,8 +26,8 @@
 	async function handleSSOLogin() {
 		if (!browser) return;
 
-		if (!PUBLIC_XEPENG_CLIENT_ID || !PUBLIC_XEPENG_CLIENT_SECRET) {
-			alert('SSO credentials are not configured in the .env file!');
+		if (!PUBLIC_XEPENG_CLIENT_ID) {
+			alert('XEPENG_CLIENT_ID is not configured in the .env file!');
 			return;
 		}
 
@@ -76,7 +76,7 @@
             paymentGateways.update(gateways => 
                 gateways.map(g => ({ ...g, enabled: g.id === pendingPG.id }))
             );
-			import('$lib/stores/payment').then(m => m.activeGatewayId.set(pendingPG.id));
+			activeGatewayId.set(pendingPG.id);
         }
         showPGModal = false;
         pendingPG = null;
@@ -102,7 +102,7 @@
 	import MobileSettings from '$lib/components/pages/MobileSettings.svelte';
 </script>
 
-<MobileSettings />
+<MobileSettings {isConnected} {isLoading} {handleSSOLogin} {handleDisconnect} />
 
 <div class="hidden lg:block">
 
@@ -215,9 +215,9 @@
 					>
 						<div class="flex items-center gap-4">
 							<div
-								class="bg-brand/10 text-brand flex h-12 w-12 items-center justify-center rounded-xl text-lg font-bold"
+								class="bg-card border border-border-light flex h-12 w-12 items-center justify-center rounded-xl overflow-hidden p-1.5"
 							>
-								X
+								<img src="/logo-xepeng.png" alt="Xepeng Logo" class="w-full h-full object-contain" onerror={(e) => (e.currentTarget as HTMLElement).style.display='none'} />
 							</div>
 							<div>
 								<h4 class="font-heading text-main text-base font-semibold">Xepeng Payment</h4>
@@ -290,8 +290,8 @@
 						<div class="bg-card-elevated border-border-light rounded-2xl border p-6 flex flex-col justify-between gap-6 transition-all hover:border-brand/30">
 							<div class="flex items-start justify-between">
 								<div class="flex items-center gap-4">
-									<div class="w-12 h-12 rounded-xl bg-card border border-border-light flex items-center justify-center text-brand font-bold text-lg">
-										{pg.name?.[0] || '?'}
+									<div class="w-12 h-12 rounded-xl bg-card border border-border-light flex items-center justify-center overflow-hidden p-1.5 shrink-0">
+										<img src="/logo-{pg.id}.png" alt="{pg.name} Logo" class="w-full h-full object-contain" onerror={(e) => (e.currentTarget as HTMLElement).style.display='none'} />
 									</div>
 									<div>
 										<h4 class="font-heading text-main text-base font-semibold">{pg?.name}</h4>
