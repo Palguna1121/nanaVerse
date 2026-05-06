@@ -77,16 +77,19 @@ Mendukung dua mode integrasi:
 
 ## 🚀 Build & Deployment
 
-Aplikasi ini menggunakan **Dual Adapter Strategy**:
-## 🚀 Build & Deployment
+Aplikasi ini menggunakan **@sveltejs/adapter-node** untuk deployment yang fleksibel.
 
-Aplikasi ini menggunakan **@sveltejs/adapter-node** untuk deployment yang fleksibel (seperti di Render, DigitalOcean, atau VPS).
+### ⚙️ Pengaturan di Dashboard Railway:
+1. Hubungkan repositori GitHub Anda ke Railway.
+2. Railway akan otomatis mendeteksi `npm run build` dan `npm start`.
+3. Di bagian **Variables**, masukkan semua isi file `.env`.
+4. Railway akan otomatis menangani port dan deployment.
 
 ### ⚙️ Pengaturan di Dashboard Render:
 Agar deployment berhasil, buat **Web Service** baru dan gunakan pengaturan berikut:
 - **Runtime**: `Node`
 - **Build Command**: `npm install && npm run build`
-- **Start Command**: `node build`
+- **Start Command**: `npm start`
 - **Environment Variables**: Masukkan semua variabel dari `.env.example` ke bagian **Environment** di dashboard Render.
 
 Untuk membuat build produksi secara lokal:
