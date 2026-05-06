@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import midtransClient from 'midtrans-client';
-import { PUBLIC_MIDTRANS_SERVER_KEY } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 // SvelteKit Vite dev server runs in Node, but we use Midtrans Node client.
 // Note: Midtrans Server Key should ideally be a secret environment variable,
@@ -33,7 +33,7 @@ export async function POST({ request, url }: RequestEvent) {
             // Menggunakan Snap API untuk mode redirect
             const snap = new midtransClient.Snap({
                 isProduction: false,
-                serverKey: PUBLIC_MIDTRANS_SERVER_KEY
+                serverKey: env.PUBLIC_MIDTRANS_SERVER_KEY
             });
 
             const parameter = {
@@ -61,7 +61,7 @@ export async function POST({ request, url }: RequestEvent) {
             // Mode Direct menggunakan CoreApi agar mirip iPaymu (halaman sendiri)
             const coreApi = new midtransClient.CoreApi({
                 isProduction: false,
-                serverKey: PUBLIC_MIDTRANS_SERVER_KEY
+                serverKey: env.PUBLIC_MIDTRANS_SERVER_KEY
             });
 
             let paymentType = '';

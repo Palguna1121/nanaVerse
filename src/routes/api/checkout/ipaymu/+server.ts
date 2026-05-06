@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import * as ipaymu from 'ipaymu-nodejs-api';
-import { PUBLIC_IPAYMU_VA, PUBLIC_IPAYMU_API_KEY } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 export async function POST({ request, url }: RequestEvent) {
 	try {
@@ -9,8 +9,8 @@ export async function POST({ request, url }: RequestEvent) {
 		const { mode, carts, userData } = body;
 
 		// Inisialisasi kredensial iPaymu
-		ipaymu.setVa(PUBLIC_IPAYMU_VA);
-		ipaymu.setApiKey(PUBLIC_IPAYMU_API_KEY);
+		ipaymu.setVa(env.PUBLIC_IPAYMU_VA);
+		ipaymu.setApiKey(env.PUBLIC_IPAYMU_API_KEY);
 		ipaymu.setProd(false); // Sandbox mode
 
 		// Pastikan URL valid

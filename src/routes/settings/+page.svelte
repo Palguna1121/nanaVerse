@@ -4,7 +4,7 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { OAuthClient } from 'xepeng-oauth-js';
-	import { PUBLIC_XEPENG_CLIENT_ID, PUBLIC_XEPENG_CLIENT_SECRET } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import { paymentGateways, activeGatewayId } from '$lib/stores/payment';
 
 	let activeTab = $derived(browser ? $page.url.searchParams.get('tab') || 'info' : 'info');
@@ -26,16 +26,16 @@
 	async function handleSSOLogin() {
 		if (!browser) return;
 
-		if (!PUBLIC_XEPENG_CLIENT_ID) {
-			alert('XEPENG_CLIENT_ID is not configured in the .env file!');
+		if (!env.PUBLIC_XEPENG_CLIENT_ID) {
+			alert('XEPENG_CLIENT_ID is not configured in the dashboard!');
 			return;
 		}
 
 		isLoading = true;
 		try {
 			const oauth = new OAuthClient({
-				clientId: PUBLIC_XEPENG_CLIENT_ID,
-				clientSecret: PUBLIC_XEPENG_CLIENT_SECRET,
+				clientId: env.PUBLIC_XEPENG_CLIENT_ID,
+				clientSecret: env.PUBLIC_XEPENG_CLIENT_SECRET,
 				baseUrl: 'https://staging-app.xepeng.com',
 				redirectUri: `${window.location.origin}/auth/callback`,
 				storage: 'localStorage',

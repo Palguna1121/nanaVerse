@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import midtransClient from 'midtrans-client';
-import { PUBLIC_MIDTRANS_SERVER_KEY } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 export async function POST({ request }: RequestEvent) {
     try {
@@ -12,7 +12,7 @@ export async function POST({ request }: RequestEvent) {
         // Inisialisasi CoreApi untuk verifikasi (opsional, tapi disarankan)
         const coreApi = new midtransClient.CoreApi({
             isProduction: false,
-            serverKey: PUBLIC_MIDTRANS_SERVER_KEY
+            serverKey: env.PUBLIC_MIDTRANS_SERVER_KEY
         });
 
         const statusResponse = await coreApi.transaction.notification(body);

@@ -2,21 +2,21 @@
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
     import { OAuthClient } from 'xepeng-oauth-js';
-    import { PUBLIC_XEPENG_CLIENT_ID, PUBLIC_XEPENG_CLIENT_SECRET } from '$env/static/public';
+    import { env } from '$env/dynamic/public';
 
     let errorMsg = $state('');
 
     onMount(async () => {
         if (browser) {
-            if (!PUBLIC_XEPENG_CLIENT_ID) {
-                errorMsg = 'XEPENG_CLIENT_ID belum dikonfigurasi di file .env!';
+            if (!env.PUBLIC_XEPENG_CLIENT_ID) {
+                errorMsg = 'XEPENG_CLIENT_ID belum dikonfigurasi di dashboard!';
                 return;
             }
 
             try {
                 const oauth = new OAuthClient({
-                    clientId: PUBLIC_XEPENG_CLIENT_ID,
-                    clientSecret: PUBLIC_XEPENG_CLIENT_SECRET,
+                    clientId: env.PUBLIC_XEPENG_CLIENT_ID,
+                    clientSecret: env.PUBLIC_XEPENG_CLIENT_SECRET,
                     baseUrl: 'https://staging-app.xepeng.com',
                     redirectUri: `${window.location.origin}/auth/callback`,
                     storage: 'localStorage',
