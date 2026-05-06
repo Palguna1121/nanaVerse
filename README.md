@@ -78,28 +78,28 @@ Mendukung dua mode integrasi:
 ## 🚀 Build & Deployment
 
 Aplikasi ini menggunakan **Dual Adapter Strategy**:
-- **Local Build**: Menggunakan `@sveltejs/adapter-static` untuk hasil build statis di folder `build/`.
-- **Production (Cloudflare)**: Menggunakan `@sveltejs/adapter-cloudflare` secara otomatis jika mendeteksi environment `CF_PAGES`. Ini diperlukan agar API Routes (SSR) dapat berjalan di Cloudflare Workers.
+## 🚀 Build & Deployment
 
-### ⚙️ Pengaturan di Dashboard Cloudflare Pages:
-Agar deployment berhasil, pastikan pengaturan di dashboard Cloudflare Pages Anda adalah sebagai berikut:
-- **Framework Preset**: `SvelteKit`
-- **Build Command**: `bun run build`
-- **Output Directory**: `.svelte-kit/cloudflare`
-- **Deploy Command**: (Kosongkan/Hapus jika ada)
-- **Environment Variables**: Masukkan semua variabel dari `.env.example` ke bagian Settings > Variables.
+Aplikasi ini menggunakan **@sveltejs/adapter-node** untuk deployment yang fleksibel (seperti di Render, DigitalOcean, atau VPS).
+
+### ⚙️ Pengaturan di Dashboard Render:
+Agar deployment berhasil, buat **Web Service** baru dan gunakan pengaturan berikut:
+- **Runtime**: `Node`
+- **Build Command**: `npm install && npm run build`
+- **Start Command**: `node build`
+- **Environment Variables**: Masukkan semua variabel dari `.env.example` ke bagian **Environment** di dashboard Render.
 
 Untuk membuat build produksi secara lokal:
 
 ```bash
 # Build aplikasi
-bun run build
+npm run build
 
 # Preview build produksi
-bun run preview
+npm run preview
 ```
 
-Hasil build akan berada di folder `build/` (menggunakan `@sveltejs/adapter-static` untuk performa maksimal).
+Hasil build akan berada di folder `build/` (menggunakan `@sveltejs/adapter-node`).
 
 ---
 
